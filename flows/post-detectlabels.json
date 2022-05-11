@@ -1,0 +1,97 @@
+{
+	"schemaVersion": "4",
+	"info": {
+		"name": "post-detectlabels"
+	},
+	"parameter": {
+		"properties": {
+			"request": {
+				"description": "The request"
+			},
+			"config": {
+				"type": "object",
+				"description": "The service's configuration"
+			},
+			"env": {
+				"type": "object",
+				"description": "The host OS environment"
+			}
+		},
+		"additionalProperties": false
+	},
+	"start": "rekognition.1",
+	"nodes": {
+		"rekognition.1": {
+			"type": "nodehandler://api-builder-plugin-rekognition/rekognition",
+			"name": "Detect Labels",
+			"method": "detectLabels",
+			"parameters": [
+				{
+					"name": "Image",
+					"type": "jsonpath",
+					"value": "$.request.body.image"
+				}
+			],
+			"outputs": {
+				"next": {
+					"routes": [
+						"http.1"
+					],
+					"context": "$.detectlabelsoutput"
+				},
+				"error": {
+					"routes": [
+						"http.2"
+					],
+					"context": "$.detectlabelserror"
+				}
+			}
+		},
+		"http.1": {
+			"type": "nodehandler://axway-flow/http",
+			"name": "Set Success HTTP Response",
+			"method": "setresponse",
+			"parameters": [
+				{
+					"name": "status",
+					"type": "number",
+					"value": "200"
+				},
+				{
+					"name": "body",
+					"type": "jsonpath",
+					"value": "$.detectlabelsoutput"
+				}
+			],
+			"outputs": {
+				"next": {
+					"context": "$.response",
+					"routes": []
+				}
+			}
+		},
+		"http.2": {
+			"type": "nodehandler://axway-flow/http",
+			"name": "Set Error HTTP Response",
+			"method": "setresponse",
+			"parameters": [
+				{
+					"name": "status",
+					"type": "number",
+					"value": "400"
+				},
+				{
+					"name": "body",
+					"type": "jsonpath",
+					"value": "$.detectlabelserror"
+				}
+			],
+			"outputs": {
+				"next": {
+					"context": "$.response",
+					"routes": []
+				}
+			}
+		}
+	}
+}

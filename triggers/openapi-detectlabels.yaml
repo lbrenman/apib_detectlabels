@@ -1,0 +1,12 @@
+triggers:
+  openapi-detectlabels-2:
+    name: post-detectlabels
+    parameters:
+      method: post-detectlabels
+    enabled: true
+    invoke:
+      flow: post-detectlabels
+      parameters:
+        request: $.request
+        config: $.config
+        env: $.env
