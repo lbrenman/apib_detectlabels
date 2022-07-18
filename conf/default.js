@@ -19,7 +19,7 @@ module.exports = {
 
   // Added to allow larger Base64 images to be posted
   bodyParser: {
-    limit: '5mb'
+    limit: process.env.IMAGE_SIZE_MAX
   },
 
 	// This is your generated API key.  It was generated uniquely when you
